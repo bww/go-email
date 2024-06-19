@@ -16,7 +16,7 @@ type Provider struct {
 	log *slog.Logger
 }
 
-func New(dsn *url.URL) (*Provider, error) {
+func New(dsn *url.URL, conf email.Config) (*Provider, error) {
 	return &Provider{
 		log: slog.Default().With("email", "mock"),
 	}, nil

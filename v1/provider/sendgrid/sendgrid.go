@@ -10,7 +10,7 @@ const Scheme = "sendgrid"
 
 type Provider struct{}
 
-func New(dsn *url.URL) (*Provider, error) {
+func New(dsn *url.URL, conf email.Config) (*Provider, error) {
 	return &Provider{}, nil
 }
 

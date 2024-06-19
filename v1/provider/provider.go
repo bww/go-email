@@ -15,16 +15,17 @@ type Provider interface {
 	Send(tmplName string, msg *email.Template) error
 }
 
-func New(dsn string) (Provider, error) {
+func New(dsn string, opts ...email.Option) (Provider, error) {
 	u, err := url.Parse(dsn)
 	if err != nil {
 		return nil, fmt.Errorf("Malformed spec: %w", err)
 	}
+	conf := email.Config{}.With(opts)
 	switch u.Scheme {
 	case sendgrid.Scheme:
-		return sendgrid.New(u)
+		return sendgrid.New(u, conf)
 	case mock.Scheme:
-		return mock.New(u)
+		return mock.New(u, conf)
 	default:
 		return nil, fmt.Errorf("%w: %s", ErrUnsupported, u.Scheme)
 	}
