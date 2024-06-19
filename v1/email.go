@@ -1,10 +1,14 @@
 package email
 
 import (
+	"errors"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
 )
+
+var ErrUnimplemented = errors.New("Not implemented")
 
 var verbose = os.Getenv("EMAIL_VERBOSE") != ""
 
@@ -15,6 +19,14 @@ type Address struct {
 
 func (a Address) IsZero() bool {
 	return a.Email == ""
+}
+
+func (a Address) String() string {
+	if a.Name != "" {
+		return fmt.Sprintf("%s <%s>", a.Name, a.Email)
+	} else {
+		return a.Email
+	}
 }
 
 type Variables map[string]string

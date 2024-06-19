@@ -3,20 +3,22 @@ package provider
 import (
 	"fmt"
 	"net/url"
+
+	"github.com/bww/go-email/v1"
+	"github.com/bww/go-email/v1/provider/mock"
+	"github.com/bww/go-email/v1/provider/sendgrid"
 )
 
-var (
-	ErrUnsupported = fmt.Errorf("Provider is not supported")
-)
+var ErrUnsupported = fmt.Errorf("Provider is not supported")
 
 type Provider interface {
-	Send() error
+	Send(tmplName string, msg *email.Template) error
 }
 
 func New(dsn string) (Provider, error) {
 	u, err := url.Parse(dsn)
 	if err != nil {
-		return fmt.Errorf("Malformed spec: %w", err)
+		return nil, fmt.Errorf("Malformed spec: %w", err)
 	}
 	switch u.Scheme {
 	case sendgrid.Scheme:
@@ -24,6 +26,6 @@ func New(dsn string) (Provider, error) {
 	case mock.Scheme:
 		return mock.New(u)
 	default:
-		return fmt.Errorf("%w: %s", ErrUnsupported, u.Scheme)
+		return nil, fmt.Errorf("%w: %s", ErrUnsupported, u.Scheme)
 	}
 }
