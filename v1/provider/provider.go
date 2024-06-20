@@ -12,6 +12,7 @@ import (
 var ErrUnsupported = fmt.Errorf("Provider is not supported")
 
 type Provider interface {
+	fmt.Stringer
 	Send(tmplName string, msg *email.Template) error
 }
 

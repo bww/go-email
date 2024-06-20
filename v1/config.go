@@ -1,8 +1,8 @@
 package email
 
 type Config struct {
-	DefaultSender     string
-	OverrideRecipient string
+	DefaultSender     Address
+	OverrideRecipient Address
 }
 
 func (c Config) With(opts []Option) Config {
@@ -14,14 +14,14 @@ func (c Config) With(opts []Option) Config {
 
 type Option func(Config) Config
 
-func WithDefaultSender(s string) Option {
+func DefaultSender(s Address) Option {
 	return func(c Config) Config {
 		c.DefaultSender = s
 		return c
 	}
 }
 
-func WithOverrideRecipient(s string) Option {
+func OverrideRecipient(s Address) Option {
 	return func(c Config) Config {
 		c.OverrideRecipient = s
 		return c

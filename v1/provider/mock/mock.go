@@ -13,12 +13,14 @@ import (
 const Scheme = "mock"
 
 type Provider struct {
+	email.Config
 	log *slog.Logger
 }
 
 func New(dsn *url.URL, conf email.Config) (*Provider, error) {
 	return &Provider{
-		log: slog.Default().With("email", "mock"),
+		Config: conf,
+		log:    slog.Default().With("email", "mock"),
 	}, nil
 }
 
@@ -29,6 +31,10 @@ func (p *Provider) Send(tmplName string, msg *email.Template) error {
 		"recipients", summaryOf(slices.Flatten(slices.Map(msg.Personalizations, func(p email.Personalization) []email.Address { return p.Recipients })), 3),
 	).Info("Send email")
 	return nil
+}
+
+func (p *Provider) String() string {
+	return "mock sender"
 }
 
 func summaryOf[E fmt.Stringer](e []E, n int) string {

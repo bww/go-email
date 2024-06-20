@@ -8,12 +8,20 @@ import (
 
 const Scheme = "sendgrid"
 
-type Provider struct{}
+type Provider struct {
+	email.Config
+}
 
 func New(dsn *url.URL, conf email.Config) (*Provider, error) {
-	return &Provider{}, nil
+	return &Provider{
+		Config: conf,
+	}, nil
 }
 
 func (p *Provider) Send(tmplName string, msg *email.Template) error {
 	return email.ErrUnimplemented
+}
+
+func (p *Provider) String() string {
+	return "Sendgrid"
 }
