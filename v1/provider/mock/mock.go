@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/url"
@@ -24,7 +25,7 @@ func New(dsn *url.URL, conf email.Config) (*Provider, error) {
 	}, nil
 }
 
-func (p *Provider) Send(tmplName string, msg email.Template) error {
+func (p *Provider) Send(cxt context.Context, tmplName string, msg email.Template) error {
 	msg = msg.With(p.Config)
 	p.log.With(
 		"template", tmplName,

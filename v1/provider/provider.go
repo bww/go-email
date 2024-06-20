@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 
@@ -13,7 +14,7 @@ var ErrUnsupported = fmt.Errorf("Provider is not supported")
 
 type Provider interface {
 	fmt.Stringer
-	Send(tmplName string, msg email.Template) error
+	Send(cxt context.Context, tmplName string, msg email.Template) error
 }
 
 func New(dsn string, opts ...email.Option) (Provider, error) {
