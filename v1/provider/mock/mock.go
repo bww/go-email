@@ -20,11 +20,12 @@ type Provider struct {
 func New(dsn *url.URL, conf email.Config) (*Provider, error) {
 	return &Provider{
 		Config: conf,
-		log:    slog.Default().With("email", "mock"),
+		log:    slog.Default().With("provider", "mock"),
 	}, nil
 }
 
-func (p *Provider) Send(tmplName string, msg *email.Template) error {
+func (p *Provider) Send(tmplName string, msg email.Template) error {
+	msg = msg.With(p.Config)
 	p.log.With(
 		"template", tmplName,
 		"sender", msg.From,
@@ -34,7 +35,11 @@ func (p *Provider) Send(tmplName string, msg *email.Template) error {
 }
 
 func (p *Provider) String() string {
-	return "mock sender"
+	if p.DefaultSender.IsZero() {
+		return "mock sender"
+	} else {
+		return fmt.Sprintf("mock sender: %s", p.DefaultSender)
+	}
 }
 
 func summaryOf[E fmt.Stringer](e []E, n int) string {

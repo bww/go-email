@@ -37,6 +37,13 @@ type Personalization struct {
 	Subject    string
 }
 
+func (p Personalization) With(conf Config) Personalization {
+	if !conf.OverrideRecipient.IsZero() {
+		p.Recipients = []Address{conf.OverrideRecipient}
+	}
+	return p
+}
+
 type Attachment struct {
 	Type        string
 	Filename    string
@@ -49,7 +56,19 @@ type Template struct {
 	From             Address
 	ReplyTo          Address
 	Personalizations []Personalization
-	Attachments      []*Attachment
+	Attachments      []Attachment
+}
+
+func (t Template) With(conf Config) Template {
+	if t.From.IsZero() {
+		t.From = conf.DefaultSender
+	}
+	if !conf.OverrideRecipient.IsZero() {
+		for i, e := range t.Personalizations {
+			t.Personalizations[i] = e.With(conf)
+		}
+	}
+	return t
 }
 
 type Fields map[string]interface{}

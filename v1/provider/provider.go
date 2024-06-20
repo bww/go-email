@@ -13,7 +13,7 @@ var ErrUnsupported = fmt.Errorf("Provider is not supported")
 
 type Provider interface {
 	fmt.Stringer
-	Send(tmplName string, msg *email.Template) error
+	Send(tmplName string, msg email.Template) error
 }
 
 func New(dsn string, opts ...email.Option) (Provider, error) {
@@ -21,7 +21,11 @@ func New(dsn string, opts ...email.Option) (Provider, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Malformed spec: %w", err)
 	}
-	conf := email.Config{}.With(opts)
+	conf := email.Config{}.WithOptions(opts)
+	conf, err = conf.WithParams(u.Query())
+	if err != nil {
+		return nil, fmt.Errorf("Invalid paramters: %w", err)
+	}
 	switch u.Scheme {
 	case sendgrid.Scheme:
 		return sendgrid.New(u, conf)
