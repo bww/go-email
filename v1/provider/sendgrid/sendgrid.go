@@ -21,7 +21,7 @@ type Provider struct {
 func New(dsn *url.URL, conf email.Config) (*Provider, error) {
 	client, err := api.New(api.WithAuthorizer(
 		api.NewBearerAuthorizer(dsn.Host)),
-		api.WithBaseURL("https://api.sendgrid.com/v3"),
+		api.WithBaseURL("https://api.sendgrid.com/v3/"),
 		api.WithHeader("Content-Type", "application/json"),
 	)
 	if err != nil {
@@ -71,7 +71,7 @@ func (p *Provider) Send(cxt context.Context, tmplName string, msg email.Template
 		Attachments:      att,
 	}
 
-	_, err := p.client.Post(cxt, "/mail/send", &tmpl, nil)
+	_, err := p.client.Post(cxt, "mail/send", &tmpl, nil)
 	if err != nil {
 		return fmt.Errorf("Could not send email: %w", err)
 	}
