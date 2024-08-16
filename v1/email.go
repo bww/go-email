@@ -14,7 +14,7 @@ var verbose = os.Getenv("EMAIL_VERBOSE") != ""
 
 type Address struct {
 	Email string `json:"email"`
-	Name  string `json:"name"`
+	Name  string `json:"name,omitempty"`
 }
 
 func (a Address) IsZero() bool {
@@ -47,16 +47,16 @@ func (p Personalization) With(conf Config) Personalization {
 type Attachment struct {
 	Type        string `json:"type"`
 	Filename    string `json:"filename"`
-	Disposition string `json:"disposition"`
-	ContentId   string `json:"content_id"`
+	Disposition string `json:"disposition,omitempty"`
+	ContentId   string `json:"content_id,omitempty"`
 	Content     []byte `json:"content"`
 }
 
 type Template struct {
 	From             Address           `json:"from"`
 	ReplyTo          Address           `json:"reply_to"`
-	Personalizations []Personalization `json:"personalization"`
-	Attachments      []Attachment      `json:"attachments"`
+	Personalizations []Personalization `json:"personalizations"`
+	Attachments      []Attachment      `json:"attachments,omitempty"`
 }
 
 func (t Template) With(conf Config) Template {
@@ -78,8 +78,8 @@ type Contact struct {
 	Email     string   `json:"email"`
 	FirstName string   `json:"first_name"`
 	LastName  string   `json:"last_name"`
-	ListsIds  []string `json:"list_ids"`
-	Fields    Fields   `json:"fields"`
+	ListsIds  []string `json:"list_ids,omitempty"`
+	Fields    Fields   `json:"fields,omitempty"`
 }
 
 type Error struct {
