@@ -15,17 +15,33 @@ func TestInterpolatePersonalization(t *testing.T) {
 	}{
 		{
 			In: Personalization{
-				Recipients: []Address{},
-				Variables:  Variables{},
-				Subject:    "Oh, hello, {{ .Name }}",
+				Recipients: []Address{
+					{
+						Name:  "{{ .Name }}",
+						Email: "{{ .Email }}",
+					},
+				},
+				Variables: Variables{
+					"favorite_color": "{{ .FavoriteColor }}",
+				},
+				Subject: "Oh, hello, {{ .Name }}; hope you still like {{ .FavoriteColor }}!",
 			},
 			Vars: map[string]string{
-				"Name": "Joseph Steel",
+				"Name":          "Joseph Steel",
+				"Email":         "joe@ussr.ru",
+				"FavoriteColor": "red",
 			},
 			Expect: Personalization{
-				Recipients: []Address{},
-				Variables:  Variables{},
-				Subject:    "Oh, hello, Joseph Steel",
+				Recipients: []Address{
+					{
+						Name:  "Joseph Steel",
+						Email: "joe@ussr.ru",
+					},
+				},
+				Variables: Variables{
+					"favorite_color": "red",
+				},
+				Subject: "Oh, hello, Joseph Steel; hope you still like red!",
 			},
 		},
 	}
