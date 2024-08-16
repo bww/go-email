@@ -101,6 +101,28 @@ type Template struct {
 	Attachments      []Attachment      `json:"attachments,omitempty"`
 }
 
+// Interpolate considers each field in a Personalization as a template string
+// which is evaluated with the provided data as context. The result is returned
+// as a Personalization.
+func (t Template) Interpolate(data interface{}) (Template, error) {
+	var err error
+
+	plzns := make([]Personalization, len(t.Personalizations))
+	for i, e := range t.Personalizations {
+		plzns[i], err = e.Interpolate(data)
+		if err != nil {
+			return Template{}, err
+		}
+	}
+
+	return Template{
+		From:             t.From,
+		ReplyTo:          t.ReplyTo,
+		Personalizations: plzns,
+		Attachments:      t.Attachments,
+	}, nil
+}
+
 func (t Template) With(conf Config) Template {
 	if t.From.IsZero() {
 		t.From = conf.DefaultSender
