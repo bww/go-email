@@ -13,8 +13,8 @@ var ErrUnimplemented = errors.New("Not implemented")
 var verbose = os.Getenv("EMAIL_VERBOSE") != ""
 
 type Address struct {
-	Email string
-	Name  string
+	Email string `json:"email"`
+	Name  string `json:"name"`
 }
 
 func (a Address) IsZero() bool {
@@ -32,9 +32,9 @@ func (a Address) String() string {
 type Variables map[string]string
 
 type Personalization struct {
-	Recipients []Address
-	Variables  Variables
-	Subject    string
+	Recipients []Address `json:"recipients"`
+	Variables  Variables `json:"variables"`
+	Subject    string    `json:"subject"`
 }
 
 func (p Personalization) With(conf Config) Personalization {
@@ -45,18 +45,18 @@ func (p Personalization) With(conf Config) Personalization {
 }
 
 type Attachment struct {
-	Type        string
-	Filename    string
-	Disposition string
-	ContentId   string
-	Content     []byte
+	Type        string `json:"type"`
+	Filename    string `json:"filename"`
+	Disposition string `json:"disposition"`
+	ContentId   string `json:"content_id"`
+	Content     []byte `json:"content"`
 }
 
 type Template struct {
-	From             Address
-	ReplyTo          Address
-	Personalizations []Personalization
-	Attachments      []Attachment
+	From             Address           `json:"from"`
+	ReplyTo          Address           `json:"reply_to"`
+	Personalizations []Personalization `json:"personalization"`
+	Attachments      []Attachment      `json:"attachments"`
 }
 
 func (t Template) With(conf Config) Template {
@@ -74,12 +74,12 @@ func (t Template) With(conf Config) Template {
 type Fields map[string]interface{}
 
 type Contact struct {
-	Id        string
-	Email     string
-	FirstName string
-	LastName  string
-	ListsIds  []string
-	Fields    Fields
+	Id        string   `json:"id"`
+	Email     string   `json:"email"`
+	FirstName string   `json:"first_name"`
+	LastName  string   `json:"last_name"`
+	ListsIds  []string `json:"list_ids"`
+	Fields    Fields   `json:"fields"`
 }
 
 type Error struct {
