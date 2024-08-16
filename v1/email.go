@@ -6,6 +6,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/bww/go-util/v1/text/template"
 )
 
 var ErrUnimplemented = errors.New("Not implemented")
@@ -35,6 +37,46 @@ type Personalization struct {
 	Recipients []Address `json:"recipients"`
 	Variables  Variables `json:"variables"`
 	Subject    string    `json:"subject"`
+}
+
+// Interpolate considers each field in a Personalization as a template string
+// which is evaluated with the provided data as context. The result is returned
+// as a Personalization.
+func (p Personalization) Interpolate(data interface{}) (Personalization, error) {
+	s, err := interpolate(p.Subject, data)
+	if err != nil {
+		return Personalization{}, err
+	}
+
+	vars := make(map[string]string)
+	for k, v := range p.Variables {
+		vars[k], err = interpolate(v, data)
+		if err != nil {
+			return Personalization{}, err
+		}
+	}
+
+	rcps := make([]Address, len(p.Recipients))
+	for i, e := range p.Recipients {
+		n, err := interpolate(e.Name, data)
+		if err != nil {
+			return Personalization{}, err
+		}
+		a, err := interpolate(e.Email, data)
+		if err != nil {
+			return Personalization{}, err
+		}
+		rcps[i] = Address{
+			Name:  n,
+			Email: a,
+		}
+	}
+
+	return Personalization{
+		Subject:    s,
+		Variables:  vars,
+		Recipients: rcps,
+	}, nil
 }
 
 func (p Personalization) With(conf Config) Personalization {
@@ -101,4 +143,16 @@ func (e Error) Error() string {
 		s.WriteString(")")
 	}
 	return s.String()
+}
+
+func interpolate(f string, v interface{}) (string, error) {
+	t, err := template.Parse(f)
+	if err != nil {
+		return "", err
+	}
+	r, err := t.Exec(v)
+	if err != nil {
+		return "", err
+	}
+	return string(r), err
 }
