@@ -8,6 +8,7 @@ import (
 type Config struct {
 	DefaultSender     Address
 	OverrideRecipient Address
+	Verbose           bool
 }
 
 func (c Config) WithOptions(opts []Option) Config {
@@ -43,6 +44,13 @@ func DefaultSender(s Address) Option {
 func OverrideRecipient(s Address) Option {
 	return func(c Config) Config {
 		c.OverrideRecipient = s
+		return c
+	}
+}
+
+func Verbose(on bool) Option {
+	return func(c Config) Config {
+		c.Verbose = on
 		return c
 	}
 }
